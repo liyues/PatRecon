@@ -25,7 +25,7 @@ This project provides a deep-learning framework for generating volumetric tomogr
 - [exp/data/2D_projection.jpg](./exp/data/2D_projection.jpg): 2D projection of the data sample, which is the input of model.
 - [exp/data/3D_CT.jpg](./exp/data/3D_CT.bin): 3D CT volume of the data sample, which will be used as groundtruth to compare with the output (prediction) results.
 - [exp/result](./exp/result): output folder to save the model prediction as .png files.
-- Please download the model and data sample and put them under `exp` folder as above. The downloading link of the model and data sample will come soon.
+- Please put the trained model and data sample under `exp` folder as above to run the code.
 
 # 3. System Requirements
 
