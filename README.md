@@ -13,8 +13,8 @@
 
 # 1. Overview
 
-This project provides a deep-learning framework for generating patient-specific volumetric tomographic X-ray images when a few 2D projections are given as input. The study demonstrates the feasibility of the approach using several patients of different disease sites.
-Using the code requires users to have basic knowledge about python, PyTorch, and deep neural networks.
+This project provides a deep-learning framework for generating volumetric tomographic X-ray images with ultra-sparse 2D projections  as input. Using the code requires users to have basic knowledge about python, PyTorch, and deep neural networks.
+
 
 
 # 2. Repo Contents
@@ -31,7 +31,7 @@ Using the code requires users to have basic knowledge about python, PyTorch, and
 
 ## Hardware Requirements
 
-Loading and running deep network requires a standard computer with enough memory to support the model defined by a user. For optimal performance, a GPU card can largely accerlerate computation. In our experiment, we use a NVIDIA Tesla V100 GPU card with about 32 GB of memory. 
+Loading and running deep network requires a standard computer with enough memory to support the model defined by a user. For optimal performance, a GPU card can largely accelerate  computation. In our experiment, we use a NVIDIA Tesla V100 GPU card with about 32 GB of memory. 
 <!-- we recommend a computer with the following specs:
 RAM: 16+ GB  
 CPU: 4+ cores, 3.3+ GHz/core -->
@@ -89,7 +89,7 @@ To running the trained model to evaluate reconstruction performance on data samp
 
 
 ## Running Experiment
-Please use the parameter `vis_plane` to get output image slices on different planes of 3D pancreas CT. The prediction results are saved under path `exp/test_results/sample_1`. The results contains `.png` files, which are named after `Plane_[0/1/2]_ImageSlice_[].png`. Each file shows the prediction, groundtruth, and difference image for one slice along the chosen plane. Specifically, the following commands could be run in terminal to get model results and visualize based on three different planes [0: axial, 1: sagittal, 2: coronal] of 3D pancreas CT.
+Please use the parameter `vis_plane` to get output image slices on different planes of 3D pancreas CT. The prediction results are saved under path `exp/test_results/sample_1`. The results contains `.png` files, which are named after `Plane_[0/1/2]_ImageSlice_[].png`. Each file shows the prediction, ground truth, and difference image for one slice along the chosen plane. Specifically, the following commands could be run in terminal to get model results and visualize based on three different planes [0: axial, 1: sagittal, 2: coronal] of 3D pancreas CT.
 ```
 python3 test.py --vis_plane 0
 python3 test.py --vis_plane 1
@@ -97,7 +97,8 @@ python3 test.py --vis_plane 2
 ```
 
 # 6. License
-This study is protected by US patent. The code and other materials in this study can be used for research only. Correspondence and requests for materials should be addressed to the corresponding author in the paper.
+A provisional patent application for the reported work has been filed. The codes are copyrighted by Stanford University and are for research only. Correspondence should be addressed to the corresponding author in the paper. Licensing of the reported technique and codes is managed by the Office of Technology Licensing (OTL) of Stanford University (Ref. Docket #S18-464).
+
 
 
 # 7. Citation
