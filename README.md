@@ -29,6 +29,8 @@ This project provides a deep-learning framework for generating volumetric tomogr
 - [exp/data/3D_CT.jpg](./exp/data/3D_CT.bin): 3D CT volume of the data sample, which will be used as groundtruth to compare with the output (prediction) results. [Download link](https://drive.google.com/file/d/1aNtf0gbo9C5kt6st8-Qqly24K_59QvwB/view?usp=sharing)
 - [exp/result](./exp/result): output folder to save the model prediction as .png files. 
 - Please put the trained model and data sample under `exp` folder as above to run the code.
+- Please note the trained model is for the specific patient sample. We suggest retraining the model to apply to the customized data according to training strategy in the paper.
+
 
 # 3. System Requirements
 
@@ -107,8 +109,14 @@ A provisional patent application for the reported work has been filed. The codes
 # 7. Citation
 If you find the code are useful, please consider citing the paper.
 ```
-@article{shen2019PatRecon,
+@article{shen2019patient,
   title={Patient-specific reconstruction of volumetric computed tomography images from a single projection view via deep learning},
   author={Shen, Liyue and Zhao, Wei and Xing, Lei},
+  journal={Nature biomedical engineering},
+  volume={3},
+  number={11},
+  pages={880--888},
+  year={2019},
+  publisher={Nature Publishing Group}
 }
 ```
