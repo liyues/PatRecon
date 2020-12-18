@@ -18,13 +18,16 @@ This project provides a deep-learning framework for generating volumetric tomogr
 
 
 # 2. Repo Contents
-
 - [test.py](./test.py): main code to run evaluation.
 - [net.py](./net.py): network definition of proposed framework.
-- [exp/model/model.pth.tar](./exp/model/model.pth.tar): trained model for running experiment.
-- [exp/data/2D_projection.jpg](./exp/data/2D_projection.jpg): 2D projection of the data sample, which is the input of model.
-- [exp/data/3D_CT.jpg](./exp/data/3D_CT.bin): 3D CT volume of the data sample, which will be used as groundtruth to compare with the output (prediction) results.
-- [exp/result](./exp/result): output folder to save the model prediction as .png files.
+- [trainer.py](./trainer.py): model training functions.
+- [data.py](./data.py): dataset definition for model training.
+- [data_loader.py](./data_loader.py): data loader definition for model training.
+- [utils.py](./utils.py): util functions definition.
+- [exp/model/model.pth.tar](./exp/model/model.pth.tar): trained model for running experiment. [Download link](https://drive.google.com/file/d/1wiwH3vHAA4zFSIbi8JT8XwdzZOP4MAT8/view?usp=sharing)
+- [exp/data/2D_projection.jpg](./exp/data/2D_projection.jpg): 2D projection of the data sample, which is the input of model. [Download link](https://drive.google.com/file/d/1G63gUOHgyukGWqstcpLWPcvcvfIPa75l/view?usp=sharing)
+- [exp/data/3D_CT.jpg](./exp/data/3D_CT.bin): 3D CT volume of the data sample, which will be used as groundtruth to compare with the output (prediction) results. [Download link](https://drive.google.com/file/d/1aNtf0gbo9C5kt6st8-Qqly24K_59QvwB/view?usp=sharing)
+- [exp/result](./exp/result): output folder to save the model prediction as .png files. 
 - Please put the trained model and data sample under `exp` folder as above to run the code.
 
 # 3. System Requirements
@@ -102,7 +105,7 @@ A provisional patent application for the reported work has been filed. The codes
 
 
 # 7. Citation
-If you find the code are useful, please cite the paper.
+If you find the code are useful, please consider citing the paper.
 ```
 @article{shen2019PatRecon,
   title={Patient-specific reconstruction of volumetric computed tomography images from a single projection view via deep learning},

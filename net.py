@@ -124,33 +124,6 @@ def _make_layers(in_channels, output_channels, type, batch_norm=False, activatio
 	return nn.Sequential(*layers)
 
 
-def _init_weights(net, init_type='normal', gain=0.02):
-	def init_func(m):
-		classname = m.__class__.__name__
-		if hasattr(m, 'weight') and (classname.find('Conv') != -1 or classname.find('Linear') != -1):
-			if init_type == 'normal':
-				init.normal_(m.weight.data, 0.0, gain)
-			elif init_type == 'xavier':
-				init.xavier_normal_(m.weight.data, gain=1.0)
-			elif init_stype == 'kaiming':
-				init.kaiming_normal_(m.weight.data, a=0, mode='fan_in')
-			elif init_type == 'orthogonal':
-				init.orthogonal_(m.weight.data, gain=gain)
-			else:
-				raise NotImplementedError('initialization method [%s] is not implemented' % init_type)
-			if hasattr(m, 'bias') and m.bias is not None:
-				print('Initializing Weights: {}...'.format(classname))
-				init.constant_(m.bias.data, 0.0)
-		elif classname.find('BatchNorm2d') != -1:
-			init.normal_(m.weight.data, 1.0, gain)
-			init.constant_(m.bias.data, 0.0)
-		elif classname.find('Sequential') == -1 and classname.find('Conv5_Deconv5_Local') == -1:
-			raise NotImplementedError('initialization of [{}] is not implemented'.format(classname))
-
-	print('initialize network with {}'.format(init_type))
-	net.apply(init_func)
-
-
 def _initialize_weights(net):
 	for m in net.modules():
 		if isinstance(m, nn.Conv2d) or isinstance(m, nn.ConvTranspose2d):
@@ -173,11 +146,11 @@ def _initialize_weights(net):
 
 class ReconNet(nn.Module):
 
-	def __init__(self, in_planes, out_planes, gain=0.02, init_type='standard'):
+	def __init__(self, in_channels, out_channels, gain=0.02, init_type='standard'):
 		super(ReconNet, self).__init__()
 
 		######### representation network - convolution layers
-		self.conv_layer1 = _make_layers(in_planes, 	256, 	'conv4_s2', False)
+		self.conv_layer1 = _make_layers(in_channels, 	256, 	'conv4_s2', False)
 		self.conv_layer2 = _make_layers(256, 		256, 	'conv3_s1', '2d')
 		self.relu2 = nn.ReLU(inplace=True)
 		self.conv_layer3 = _make_layers(256, 		512, 	'conv4_s2', '2d', 'relu')
@@ -208,14 +181,13 @@ class ReconNet(nn.Module):
 		self.deconv_layer2 = _make_layers(128,		64, 	'deconv4x4_s2', '3d', 'relu')
 		self.deconv_layer1 = _make_layers(64,		64, 	'deconv3x3_s1', '3d', 'relu')
 		self.deconv_layer0 = _make_layers(64,		1, 		'conv1x1_s1', False, 'relu')
-		self.output_layer = _make_layers(64,	out_planes, 'conv1_s1', False)
+		self.output_layer = _make_layers(64,	out_channels, 'conv1_s1', False)
 		
-		if init_type == 'standard':
-			_initialize_weights(self)
-		else:
-			_init_weights(self, gain=gain, init_type=init_type)
+		# network initialization
+		_initialize_weights(self)
 
-	def forward(self, x):
+
+	def forward(self, x, out_feature=False):
 		### representation network
 		conv1 = self.conv_layer1(x)
 		conv2 = self.conv_layer2(conv1)
@@ -254,8 +226,11 @@ class ReconNet(nn.Module):
 		out = torch.squeeze(out, 1)
 		out = self.output_layer(out)
 
-		return out
+		if out_feature:
+			return out, features, trans_features
+		else:
+			return out
 
-def reconnet(in_channels, out_channels, **kwargs):
-	model = ReconNet(in_channels, out_channels, **kwargs)
-	return model
+# def reconnet(in_channels, out_channels, **kwargs):
+# 	model = ReconNet(in_channels, out_channels, **kwargs)
+# 	return model

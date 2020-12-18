@@ -5,7 +5,6 @@ import shutil
 import time
 import random
 import numpy as np
-
 import torch
 import torch.nn as nn
 import torch.nn.parallel
@@ -16,12 +15,9 @@ import torch.utils.data
 import torch.utils.data.distributed
 import torchvision.transforms as transforms
 import torchvision.datasets as datasets
-
 from torch.utils.data import Dataset, DataLoader
 from torch.autograd import Variable
-
-from net import reconnet
-
+from net import ReconNet
 from sklearn.metrics import mean_absolute_error
 from sklearn.metrics import mean_squared_error
 from skimage.measure import compare_mse, compare_nrmse, compare_psnr, compare_ssim
@@ -37,7 +33,7 @@ parser.add_argument('--exp', type=int, default=1,
 parser.add_argument('--seed', type=int, default=1, 
                     metavar='N', help='manual seed for GPUs to generate random numbers')
 parser.add_argument('--num-views', type=int, default=1,
-                    help='number of classes for semi-supervised training')
+                    help='number of views/projections in inputs')
 parser.add_argument('--input-size', type=int, default=128,
                     help='dimension of input view size')
 parser.add_argument('--output-size', type=int, default=128,
@@ -68,13 +64,11 @@ def main():
     print('Testing Experiement {} ...................'.format(args.exp))
     if args.exp == 1:
         args.output_channel = 46
-    elif args.exp == 2:
-        args.output_channel = 168
     else:
         assert False, print('Not legal experiment index!')
 
     # define model
-    model = reconnet(in_channels=args.num_views, out_channels=args.output_channel)
+    model = ReconNet(in_channels=args.num_views, out_channels=args.output_channel)
     model = torch.nn.DataParallel(model).cuda()
 
     # define loss function
@@ -96,25 +90,24 @@ def main():
             images = np.zeros((args.input_size, args.input_size, args.num_views), dtype=np.uint8)      ### input image size (H, W, C)
             ### load image
             for view_idx in range(args.num_views):
-                view_path = os.path.join(exp_path, 'data/2D_projection_{}.jpg'.format(view_idx+1))
+                image_path = os.path.join(exp_path, 'data/2D_projection_{}.jpg'.format(view_idx+1))
                 ### resize 2D images
-                img = Image.open(view_path).resize((args.input_size, args.input_size))
+                img = Image.open(image_path).resize((args.input_size, args.input_size))
                 images[:, :, view_idx] = np.array(img)
             if self.transform:
                 images = self.transform(images)
 
             ### load target
-            model_path = os.path.join(exp_path, 'data/3D_CT.bin')
-            model = np.fromfile(model_path, dtype=np.float32)
-            model = np.reshape(model, (-1, args.output_size, args.output_size))
-            # model = model[ args.start_slice : (args.start_slice + args.output_channel), :, :]
+            volume_path = os.path.join(exp_path, 'data/3D_CT.bin')
+            volume = np.fromfile(volume_path, dtype=np.float32)
+            volume = np.reshape(volume, (-1, args.output_size, args.output_size))
 
             ### scaling normalize
-            model = model - np.min(model)
-            model = model / np.max(model)
-            labels = torch.from_numpy(model)
+            volume = volume - np.min(volume)
+            volume = volume / np.max(volume)
+            volume = torch.from_numpy(volume)
 
-            return (images, labels)
+            return (images, volume)
 
     normalize = transforms.Normalize(mean=[0.516], std=[0.264])
     test_dataset = MedReconDataset(
@@ -132,12 +125,11 @@ def main():
     # load model 
     ckpt_file = os.path.join(exp_path, 'model/model.pth.tar')
     if os.path.isfile(ckpt_file):
-        print("=> loading checkpoint '{}'".format(ckpt_file))
+        print("=> loading checkpoint '{}' ".format(ckpt_file))
         checkpoint = torch.load(ckpt_file)
         best_loss = checkpoint['best_loss']
         model.load_state_dict(checkpoint['state_dict'])
-        print("=> loaded checkpoint '{}' (epoch {})"
-              .format(ckpt_file, checkpoint['epoch']))
+        print("=> loaded checkpoint '{}' ".format(ckpt_file))
     else:
         print("=> no checkpoint found at '{}'".format(ckpt_file))
 
@@ -145,7 +137,6 @@ def main():
     loss, pred_data = test(test_loader, model, criterion, mode='Test')
 
     # show image
-    # pred_data = np.load(os.path.join(exp_path, 'test_results/test_prediction.npz'))
     for idx in range(args.test):
         save_path = os.path.join(exp_path, 'result/sample_{}'.format(idx+1))
         if not os.path.exists(save_path):
@@ -190,7 +181,7 @@ def test(val_loader, model, criterion, mode):
 
 def dataNormalize(data):
     # scaling to [0,1]
-    data = data- np.min(data)
+    data = data - np.min(data)
     data = data / np.max(data)
     assert((np.max(data) - 1.0 < 1e-3) and (np.min(data) < 1e-3))
     return data
