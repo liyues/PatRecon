@@ -13,7 +13,7 @@
 
 # 1. Overview
 
-This project provides a deep-learning framework for generating volumetric tomographic X-ray images with ultra-sparse 2D projections  as input. Using the code requires users to have basic knowledge about python, PyTorch, and deep neural networks.
+This project ([paper link](https://www.nature.com/articles/s41551-019-0466-4)) provides a deep-learning framework for generating volumetric tomographic X-ray images with ultra-sparse 2D projections as input. Using the code requires users to have basic knowledge about python, PyTorch, and deep neural networks.
 
 
 
